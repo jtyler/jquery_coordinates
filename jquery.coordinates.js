@@ -3,6 +3,8 @@ jQuery.fn.coordinates = function(options) {
   var offset = null;
   var height = null;
   var width = null;
+  var scroll_top = null;
+  var scroll_left = null;
   var mouse_x = 0;
   var mouse_y = 0;
   
@@ -16,6 +18,8 @@ jQuery.fn.coordinates = function(options) {
     offset = obj.offset();
     height = obj.height();
     width = obj.width();
+    scroll_top = jQuery(document).scrollTop();
+    scroll_left = jQuery(document).scrollLeft();
     
     if (options.grid) {
       obj.css({position: 'relative'})
@@ -26,12 +30,18 @@ jQuery.fn.coordinates = function(options) {
   
   var mouseTrackingLoop = function() {
     if (mouse_down) {
-      options.callback(((mouse_x - offset.left)*2/width - 1), ((mouse_y - offset.top)*2/height - 1));
+      options.callback(((mouse_x - offset.left + scroll_left)*2/width - 1), ((mouse_y - offset.top + scroll_top)*2/height - 1));
       setTimeout(function() { mouseTrackingLoop(); }, options.delay);
     }
   }
 
   jQuery(this).mousedown(function(e) {
+    offset = jQuery(this).offset();
+    height = jQuery(this).height();
+    width = jQuery(this).width();
+    scroll_top = jQuery(document).scrollTop();
+    scroll_left = jQuery(document).scrollLeft();
+
     mouse_down = true;
     mouse_x = e.clientX;
     mouse_y = e.clientY;
